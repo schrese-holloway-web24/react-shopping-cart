@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Route } from 'react-router-dom';
 import data from './data';
-
+import {useLocalStorage} from './hooks/useLocalStorage';
 //contexts
 import {ProductContext} from './contexts/ProductContext';
 import {CartContext} from './contexts/CartContext';
@@ -16,17 +16,24 @@ function App() {
 	const [products] = useState(data);
 	const [cart, setCart] = useState([]);
 
+	console.log(products);
+	//adds items to the cart
 	const addItem = item => {
 		setCart([...cart, item])
+		// window.localStorage.setItem('cart', products)
 	};
+
+	//removes items from the cart
+	const removeItem = itemsID => {
+		setCart(cart.filter(item => item.id !== itemsID))
+		console.log('clicked')
+	}
 
 	return (
 		<div className="App">
 			<ProductContext.Provider value = {{products, addItem}}>
-				<CartContext.Provider value = {cart}>
+				<CartContext.Provider value = {{cart, removeItem}}>
 					<Navigation />
-
-					
 						{/* Routes */}
 						<Route
 							exact
@@ -36,7 +43,7 @@ function App() {
 
 						<Route
 							path="/cart"
-							component = {ShoppingCart} 
+							component = {ShoppingCart}
 						/>
 				</CartContext.Provider>
 			</ProductContext.Provider>
